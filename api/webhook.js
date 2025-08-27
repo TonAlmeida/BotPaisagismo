@@ -1,26 +1,33 @@
+const express = require("express");
+const bodyParser = require("body-parser");
 const fetch = require("node-fetch");
 
-const token = "SEU_TOKEN_DO_WHATSAPP";
-const phoneNumberId = "SEU_PHONE_NUMBER_ID";
+const app = express();
+app.use(bodyParser.json());
 
-export default async function handler(req, res) {
-  if (req.method === "GET") {
-    // Endpoint de verificação do WhatsApp
-    const mode = req.query["hub.mode"];
-    const tokenReceived = req.query["hub.verify_token"];
-    const challenge = req.query["hub.challenge"];
+const VERIFY_TOKEN = "meumelhortoken"; // token de verificação do webhook
+const WHATSAPP_TOKEN = "meumelhortoken"; // access token da API do WhatsApp
+const PHONE_NUMBER_ID = "740479862489336"; // seu phone_number_id fixo
 
-    if (mode && tokenReceived === "SEU_TOKEN_DE_VERIFICACAO") {
-      return res.status(200).send(challenge);
-    } else {
-      return res.status(403).send("Token inválido");
-    }
+// Verificação do Webhook (GET)
+app.get("/webhook", (req, res) => {
+  const mode = req.query["hub.mode"];
+  const token = req.query["hub.verify_token"];
+  const challenge = req.query["hub.challenge"];
+
+  if (mode && token === VERIFY_TOKEN) {
+    return res.status(200).send(challenge);
+  } else {
+    return res.sendStatus(403);
   }
+});
 
-  if (req.method === "POST") {
+// Recebimento de mensagens (POST)
+app.post("/webhook", async (req, res) => {
+  try {
     const message = req.body.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
     if (message) {
-      const from = message.from;
+      const from = message.from; // número do usuário
       const text = message.text?.body;
       let reply = menuInicial();
 
@@ -52,13 +59,14 @@ export default async function handler(req, res) {
 
       await enviarMensagem(from, reply);
     }
-
-    return res.status(200).send("EVENT_RECEIVED");
+    return res.sendStatus(200);
+  } catch (error) {
+    console.error("Erro no webhook:", error);
+    return res.sendStatus(500);
   }
+});
 
-  return res.status(405).send("Método não permitido");
-}
-
+// Função do menu inicial
 function menuInicial() {
   return `🌱 Olá, seja bem-vindo(a) à *[Nome da Empresa]*.
 Eu sou o assistente virtual e vou te ajudar a encontrar o que precisa.
@@ -72,17 +80,9 @@ Eu sou o assistente virtual e vou te ajudar a encontrar o que precisa.
 7️⃣ Outros`;
 }
 
+// Função para enviar mensagem
 async function enviarMensagem(to, message) {
-  const url = `https://graph.facebook.com/v17.0/${phoneNumberId}/messages`;
-  const data = { messaging_product: "whatsapp", to, text: { body: message } };
-
-  await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-}
+  const url = `https://graph.facebook.com/v17.0/${PHONE_NUMBER_ID}/messages`;
+  const data = {
+    me
 

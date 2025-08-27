@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "botPaisagismo.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node api/webhook.js"
   },
   "keywords": [],
   "author": "",
@@ -13,9 +13,5 @@
     "body-parser": "^2.2.0",
     "express": "^5.1.0",
     "node-fetch": "^2.7.0"
-  },
-  "scripts": {
-  "start": "node api/webhook.js"
-}
-
+  }
 }
