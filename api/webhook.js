@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 
-const token = "SEU_TOKEN_DO_WHATSAPP";
-const phoneNumberId = "SEU_PHONE_NUMBER_ID";
+const token = "meutoken";
+const phoneNumberId = "740479862489336";
 
 export default async function handler(req, res) {
   if (req.method === "GET") {
@@ -10,7 +10,7 @@ export default async function handler(req, res) {
     const tokenReceived = req.query["hub.verify_token"];
     const challenge = req.query["hub.challenge"];
 
-    if (mode && tokenReceived === "SEU_TOKEN_DE_VERIFICACAO") {
+    if (mode && tokenReceived === "meutoken") {
       return res.status(200).send(challenge);
     } else {
       return res.status(403).send("Token inválido");
