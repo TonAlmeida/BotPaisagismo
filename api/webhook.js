@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  console.log('📨 Recebida requisição:', req.method);
+  console.log('📨 Método:', req.method);
   
   try {
     // VERIFICAÇÃO DO WEBHOOK (GET)
@@ -8,16 +8,16 @@ export default async function handler(req, res) {
       const token = req.query['hub.verify_token'];
       const challenge = req.query['hub.challenge'];
       
-      // ⚠️ SUBSTITUA PELO SEU TOKEN DO PAINEL META!
-      const VERIFY_TOKEN = 'meumelhortoken';
+      // ⚠️ SUBSTITUA PELO SEU TOKEN REAL!
+      const VERIFY_TOKEN = 'seu_token_do_meta_aqui';
       
-      console.log('🔍 Dados verificação:', { mode, token, challenge });
+      console.log('🔍 Dados recebidos:', { mode, token });
       
       if (mode === 'subscribe' && token === VERIFY_TOKEN) {
-        console.log('✅ Webhook verificado com sucesso!');
+        console.log('✅ Webhook verificado!');
         return res.status(200).send(challenge);
       } else {
-        console.log('❌ Falha na verificação');
+        console.log('❌ Token inválido');
         return res.status(403).json({ error: 'Token inválido' });
       }
     }
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
     return res.status(405).end();
     
   } catch (error) {
-    console.error('💥 Erro no webhook:', error);
+    console.error('💥 Erro:', error);
     return res.status(500).json({ 
       error: 'Internal server error',
       message: error.message 

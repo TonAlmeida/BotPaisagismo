@@ -1,17 +1,10 @@
 {
   "name": "botpaisagismo",
   "version": "1.0.0",
-  "main": "botPaisagismo.js",
   "scripts": {
-    "start": "node api/webhook.js"
+    "dev": "vercel dev"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
-    "body-parser": "^2.2.0",
-    "express": "^5.1.0",
-    "node-fetch": "^2.7.0"
+    "@vercel/node": "^2.15.10"
   }
 }
